@@ -124,9 +124,6 @@ head(CleanNIPostCode, n=10L)
 
 match_result <- match(AllNICrimeData$Location, CleanNIPostCode$Primary_Thorfare)
 
-m3 <-merge(AllNICrimeData, movies, by.x = "surname", by.y = "name", all.x = TRUE)
-m3
-
 match_result <- dplyr::left_join(AllNICrimeData, CleanNIPostCode, by= c("Location" = "Primary_Thorfare"), copy = FALSE)
 
 head(match_result, 10L)
