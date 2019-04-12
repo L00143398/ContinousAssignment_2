@@ -188,6 +188,35 @@ head(test_random_crime_sample)
 
 crime_data_with_postcode <- find_a_postcode(random_crime_sample)
 
-head(crime_data_with_postcode, 10)
+str(crime_data_with_postcode)
 nrow(crime_data_with_postcode)
+nrow(random_crime_sample)
+
+
+library(plyr)
+
+combined_randon_crime_data <- rbind.fill(random_crime_sample, crime_data_with_postcode)
+
+nrow(combined_randon_crime_data)
+
+
+dplyr::filter(random_crime_sample, grepl('LEATHEMSTOWN', Location) )
+dplyr::filter(crime_data_with_postcode, grepl('LEATHEMSTOWN', Location) )
+dplyr::filter(combined_randon_crime_data, grepl('LEATHEMSTOWN', Location) )
+
+chart_data <- dplyr::filter(combined_randon_crime_data, grepl('BT1', Postcode) )
+head(chart_data, 20)
+
+chart_data <- chart_data %>% arrange(Postcode, Crime.type)
+
+chart_table <- table(chart_data$Crime.type)
+chart_table
+
+barplot(table(chart_data$Crime.type), 
+        ylab='Number of occurences', 
+        xlab='Crime Type',
+        main='Crime Types in Norther Ireland')
+
+
+
 
