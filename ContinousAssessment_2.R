@@ -2,6 +2,10 @@
 # I am assuming that the file "NIPostcodes.csv" is in the current working directory
 # Please note I forced all blank spaces to "NA" to make it easier to manipulate as I move forward
 # This also take care of the Step C action as rather than dropping those rows I replace with NA
+# installing the dplyr package and library as it is used within the program.
+
+install.packages("dplyr")
+library(dplyr)
 
 NIPostCodeSource <- read.csv(file = "NIPostcodes.csv", header=FALSE, na.strings=c("","NA"))
 
@@ -24,10 +28,11 @@ head(NIPostCodeSource, 10)
 structure(NIPostCodeSource, n = 10L)
 head(NIPostCodeSource, n = 10L)
 
-# The total number of missing values is shown with the summary command and it specifically lists the number of NA's
-# Please note that for some data columns there are no NA's e.g. County, so NA's is not listed for that column.
-summary(NIPostCodeSource)
-mean(is.na(NIPostCodeSource))
+# The total number and mean of missing values is shown with the summary
+
+colSums(is.na(NIPostCodeSource))
+colMeans(is.na(NIPostCodeSource))
+
 # The request to return the mean missing values of the NIPOstcodedata doesn't make sense - need to discuss further.
 # mean(NIPostCodeSource)
 
@@ -57,8 +62,7 @@ str(NIPostCodeSource)
 # populated in any of the 3 fields.
 # In order to use the dplyr function I installed the package and then called the library and ran the filter to populate Limavady_Data
 
-install.packages("dplyr")
-library(dplyr)
+
 Limavady_Data <- dplyr::filter(NIPostCodeSource, grepl('LIMAVADY', Town) | grepl('LIMAVADY', Townland) | grepl('LIMAVADY', Locality))
 nrow(Limavady_Data)
 
@@ -166,8 +170,8 @@ find_a_postcode <- function(crime_data){
 crime_data_with_postcode <- find_a_postcode(random_crime_sample)
 
 str(random_crime_sample)
-nrow(random_crime_sample)
-head(random_crime_sample, 10)
+nrow(crime_data_with_postcode)
+head(crime_data_with_postcode, 10)
 tail(random_crime_sample, 10)
 
 # command to combine both dataframes togehter - with the new Postcode field being added and populated with nulls.
@@ -194,26 +198,26 @@ nrow(chart_data)
 
 
 #increase margin
-my_vector=c(3,12,5,18,45)
-names(my_vector)=c("A","B","C","D","E")
-par(mar=c(11,4,4,4))
-barplot(my_vector, col=rgb(0.2,0.4,0.6,0.6), names.arg=c("very long group name 1",
-                                                         "very long group name 2",
-                                                         "very long group name 3",
-                                                         "very long group name 4",
-                                                         "very long group name 5"), las=2 )
+
 chart_table <- table(chart_data$Crime.type)
 chart_table[order(Crime.Type)]
 chart_table
 
-main <- "par(cex.axis=2, cex.lab=2, cex.main=1.2, cex.sub=1)"
 
-barplot(table(chart_data$Crime.type), 
-        ylab='Number of occurences', 
-        xlab='Crime Type',
-#        las=2,
-        main=main)
+# Plotting the Crime Type on a barplot
+# first I extracted the names of the various crimes into labelist
+# then I put the arguments of what to graph_to_plot but did not show the names.
+# Then the final arugment shows the labels - which are reduced to 70% so they can fit properly and slanted
+# at a 45 degree angle.
 
+labellist <- names(chart_table)
 
+grapht_to_plot <- barplot(table(chart_data$Crime.type), 
+        las=2,
+        col= rainbow(20),
+        names.arg = "",
+        main="Crime Data in Northern Ireland")
+
+text(grapht_to_plot[,1], -3.7, srt = 45, adj= .9, xpd = TRUE, labels = labellist , cex=.7)
 
 
